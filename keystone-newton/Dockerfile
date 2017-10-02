@@ -8,8 +8,14 @@ RUN zypper ar -Gf https://download.opensuse.org/repositories/Cloud:/OpenStack:/N
 ADD ./wsgi-keystone.conf /etc/apache2/conf.d/wsgi-keystone.conf
 ADD ./keystone.conf /etc/keystone/keystone.conf
 
-RUN keystone-manage db_sync
-RUN keystone-manage fernet_setup --keystone-user root --keystone-group root
+RUN su keystone -s /bin/bash -c "keystone-manage db_sync" && \
+    keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone &&\
+    keystone-manage bootstrap --bootstrap-password nova \
+                    --bootstrap-username admin \
+                    --bootstrap-project-name admin \
+                    --bootstrap-role-name admin \
+                    --bootstrap-service-name keystone
+
 
 EXPOSE 5000 35357
 
