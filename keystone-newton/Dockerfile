@@ -16,7 +16,8 @@ RUN su keystone -s /bin/bash -c "keystone-manage db_sync" && \
                     --bootstrap-role-name admin \
                     --bootstrap-service-name keystone
 
-
 EXPOSE 5000 35357
 
-CMD ["apachectl","-D","FOREGROUND"]
+COPY apache-foreground /usr/local/bin/
+
+ENTRYPOINT ["apache-foreground"]
